@@ -1,0 +1,12 @@
+package com.example.walletledger.core.model;
+
+public enum RejectionReason {
+    INSUFFICIENT_FUNDS,
+    CURRENCY_MISMATCH,
+    SAME_ACCOUNT_TRANSFER,
+    SOURCE_ACCOUNT_NOT_FOUND,
+    TARGET_ACCOUNT_NOT_FOUND,
+    INVALID_MONETARY_AMOUNT,
+    INVALID_IDENTIFIER,
+    UNKNOWN_CURRENCY
+}

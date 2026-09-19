@@ -1,0 +1,34 @@
+services:
+  wallet-ledger-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: wallet-ledger-service:1.0.0
+    container_name: wallet-ledger-service
+    ports:
+      - "${WALLET_LEDGER_PORT:-8080}:8080"
+    environment:
+      DEPLOYMENT_ENVIRONMENT: docker
+      JAVA_OPTS: -XX:MaxRAMPercentage=75.0 -XX:+ExitOnOutOfMemoryError
+      RATE_LIMIT_ENABLED: "true"
+      RATE_LIMIT_REQUESTS_PER_PERIOD: "100"
+      RATE_LIMIT_PERIOD: 1m
+      RATE_LIMIT_MAXIMUM_TRACKED_CLIENTS: "50000"
+      RATE_LIMIT_CLIENT_RETENTION: 10m
+      LEDGER_IN_FLIGHT_WAIT_BUDGET: 2s
+      LEDGER_IDEMPOTENCY_MAXIMUM_RECORDS: "100000"
+      LEDGER_IDEMPOTENCY_RETENTION: 30m
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--output", "/dev/null", "http://localhost:8080/actuator/health/readiness"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
+    stop_grace_period: 40s
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 1g
