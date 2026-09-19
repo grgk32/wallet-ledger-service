@@ -1,0 +1,70 @@
+spring:
+  application:
+    name: wallet-ledger-service
+  flyway:
+    enabled: false
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+server:
+  port: 8080
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: ${DEPLOYMENT_ENVIRONMENT:local}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      slo:
+        http.server.requests: 25ms,100ms,250ms,500ms,1s
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+  api-docs:
+    path: /v3/api-docs
+
+ledger:
+  in-flight-wait-budget: 2s
+  idempotency-maximum-records: 100000
+  idempotency-retention: 30m
+
+rate-limit:
+  enabled: true
+  requests-per-period: 100
+  period: 1m
+  maximum-tracked-clients: 50000
+  client-retention: 10m
+
+cors:
+  allowed-origins: "*"
+  allowed-methods: GET,POST,OPTIONS
+  allowed-headers: "*"
+  exposed-headers: Idempotency-Replayed,Retry-After,X-Correlation-Id
+  max-age: 1h
+
+logging:
+  level:
+    root: INFO

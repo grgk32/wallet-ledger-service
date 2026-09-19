@@ -1,0 +1,12 @@
+rate-limit:
+  enabled: false
+
+ledger:
+  in-flight-wait-budget: 500ms
+  idempotency-maximum-records: 1000
+  idempotency-retention: 5m
+
+logging:
+  level:
+    root: WARN
+    com.example.walletledger: INFO
